@@ -1,16 +1,104 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import React, { Component } from 'react';
+import { Wrapper } from './app.styled';
+import { ContactForm } from './ContactForm/contactForm';
+import { Filter } from './Filter/filter';
+import { ContactList } from './ContactList/contactList';
+import { INITIAL_STATE } from 'constants/initial-contacts-state';
+import { saveContacts } from 'store/localStorage';
+
+export class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      contacts: INITIAL_STATE.contacts,
+      filter: '',
+    };
+
+    this.changeFilter = this.changeFilter.bind(this);
+    this.addContact = this.addContact.bind(this);
+    this.filterContacts = this.filterContacts.bind(this);
+    this.deleteContact = this.deleteContact.bind(this);
+  }
+
+  // componentDidMount() {
+  //   console.log('Component APP mounted.');
+  //   console.log('this.state before: ', this.state);
+  //   const response = loadContacts(LOCAL_STORAGE_KEY);
+  //   this.setState({ contacts: response.contacts });
+  //   console.log('this.state after: ', this.state);
+  // }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const oldState = this.state;
+    // console.log('oldState: ', oldState);
+    // console.log('nextState: ', nextState);
+
+    if (nextState === oldState) {
+      console.log('Component should not update: ', oldState,' => ', nextState);
+      return false;
+    }
+    console.log('Component should update: ', oldState, ' => ', nextState);
+    // saveContacts(nextState.contacts);
+    return true;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.contacts !== prevState.contacts) {
+      console.log('Contacts changed.')
+      console.log('Contacts saved.')
+      saveContacts(this.state.contacts);
+    }
+  }
+
+  changeFilter = event => {
+    const { value } = event.target;
+    this.setState({ filter: value });
+  };
+
+  addContact = newContact => {
+    const { contacts } = this.state;
+    const existContact = contacts.find(
+      contact => contact.name === newContact.name
+    );
+
+    if (existContact) {
+      alert(`${newContact.name} is already in contacts!`);
+      return;
+    }
+    this.setState({ contacts: [...contacts, newContact] });
+  };
+
+  filterContacts = () => {
+    const { contacts, filter } = this.state;
+    return filter.trim() === ''
+      ? contacts
+      : contacts.filter(contact =>
+          contact.name.toLowerCase().includes(filter.toLowerCase())
+        );
+  };
+
+  deleteContact = event => {
+    const { contacts } = this.state;
+    this.setState({
+      contacts: contacts.filter(contact => contact.id !== event.target.name),
+    });
+  };
+
+  render() {
+    return (
+      <Wrapper>
+        <h1>Phonebook</h1>
+        <ContactForm onFormSubmit={this.addContact} />
+        <h2>Contacts</h2>
+        <Filter filter={this.state.filter} onFilterChange={this.changeFilter} />
+        <ContactList
+          contacts={this.state.contacts}
+          filter={this.state.filter}
+          onFilterChange={this.filterContacts}
+          onDeleteContact={this.deleteContact}
+        />
+      </Wrapper>
+    );
+  }
+}
