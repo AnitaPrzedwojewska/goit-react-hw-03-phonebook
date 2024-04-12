@@ -3,11 +3,6 @@ import { nanoid } from 'nanoid';
 import { InputStyled } from './filter.styled';
 
 export class Filter extends Component {
-  // constructor(props) {
-  //   super(props);
-
-    // this.handleChange = this.handleChange.bind(this);
-  // }
 
   handleChange = (event) => {
     this.props.onFilterChange(event);

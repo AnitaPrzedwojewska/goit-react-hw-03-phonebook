@@ -23,10 +23,7 @@ export class App extends Component {
 
   // componentDidMount() {
   //   console.log('Component APP mounted.');
-  //   console.log('this.state before: ', this.state);
-  //   const response = loadContacts(LOCAL_STORAGE_KEY);
-  //   this.setState({ contacts: response.contacts });
-  //   console.log('this.state after: ', this.state);
+  //   console.log('this.state: ', this.state);
   // }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -35,18 +32,17 @@ export class App extends Component {
     // console.log('nextState: ', nextState);
 
     if (nextState === oldState) {
-      console.log('Component should not update: ', oldState,' => ', nextState);
+      // console.log('Component should not update: ', oldState,' => ', nextState);
       return false;
     }
-    console.log('Component should update: ', oldState, ' => ', nextState);
-    // saveContacts(nextState.contacts);
+    // console.log('Component should update: ', oldState, ' => ', nextState);
     return true;
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.contacts !== prevState.contacts) {
-      console.log('Contacts changed.')
-      console.log('Contacts saved.')
+      // console.log('Contacts changed.')
+      // console.log('Contacts saved.')
       saveContacts(this.state.contacts);
     }
   }
